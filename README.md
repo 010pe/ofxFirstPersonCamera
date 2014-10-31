@@ -62,7 +62,11 @@ void ofApp::update()
 
 void ofApp::draw()
 {
+  cam.begin();
+
   ofDrawSphere(10.0f);
+
+  cam.end();
 }
 ```
 
