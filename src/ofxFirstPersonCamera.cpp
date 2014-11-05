@@ -131,6 +131,7 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 
   glfwSetCursorPos(ofxGetGLFWWindow(), ofGetWidth()/2, ofGetHeight()/2);
 
+  // Room for improvements: make roll
   {
     ofMatrix4x4 View;
     View.rotate(PAngle, 1, 0, 0);
