@@ -53,11 +53,12 @@ And enable camera control in `ofApp.cpp` on `setup` call:
 
 void ofApp::setup()
 {
-  cam.enableControl();
 }
 
 void ofApp::update()
 {
+  if (!cam.isControlled())
+      cam.enableControl();
 }
 
 void ofApp::draw()
