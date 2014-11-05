@@ -64,6 +64,9 @@ void ofxFirstPersonCamera::disableControl()
 
 void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
+  PAngle = getPitch();
+  YAngle = getHeading();
+
   if (Up or Down or Forward or Left or Backward or Right) updateCamPosition();
 }
 
