@@ -5,15 +5,14 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
   IsRegistered = false;
   IsControlled = false;
 
-  PAngle   = 0.00f;
-  YAngle   = 0.00f;
-
   Up       = false;
   Down     = false;
   Left     = false;
   Right    = false;
   Forward  = false;
   Backward = false;
+
+  UpVector = ofVec3f(0, 1, 0);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
@@ -47,10 +46,10 @@ void ofxFirstPersonCamera::disableControl()
 
   Up       = false;
   Down     = false;
-  Forward  = false;
   Left     = false;
-  Backward = false;
   Right    = false;
+  Forward  = false;
+  Backward = false;
 
   if (IsRegistered) {
     IsRegistered = false;
@@ -62,32 +61,33 @@ void ofxFirstPersonCamera::disableControl()
   }
 }
 
-void ofxFirstPersonCamera::update(ofEventArgs& args)
-{
-  PAngle = getPitch();
-  YAngle = getHeading();
-
-  if (Up or Down or Forward or Left or Backward or Right) updateCamPosition();
-}
-
 void ofxFirstPersonCamera::keyPressed(ofKeyEventArgs& key)
 {
-  if      (key.keycode == upKey      ) Up       = true;
-  else if (key.keycode == downKey    ) Down     = true;
-  else if (key.keycode == leftKey    ) Left     = true;
-  else if (key.keycode == rightKey   ) Right    = true;
-  else if (key.keycode == forwardKey ) Forward  = true;
-  else if (key.keycode == backwardKey) Backward = true;
+  if      (key.keycode == keyUp       ) Up       = true;
+  else if (key.keycode == keyDown     ) Down     = true;
+  else if (key.keycode == keyLeft     ) Left     = true;
+  else if (key.keycode == keyRight    ) Right    = true;
+  else if (key.keycode == keyForward  ) Forward  = true;
+  else if (key.keycode == keyBackward ) Backward = true;
+
+  if      (key.keycode == keyRollLeft ) { roll( rollspeed); UpVector = getUpDir(); }
+  else if (key.keycode == keyRollRight) { roll(-rollspeed); UpVector = getUpDir(); }
+  else if (key.keycode == keyRollReset) { roll(-getRoll()); UpVector = ofVec3f(0, 1, 0); }
 }
 
 void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& key)
 {
-  if      (key.keycode == upKey      ) Up       = false;
-  else if (key.keycode == downKey    ) Down     = false;
-  else if (key.keycode == leftKey    ) Left     = false;
-  else if (key.keycode == rightKey   ) Right    = false;
-  else if (key.keycode == forwardKey ) Forward  = false;
-  else if (key.keycode == backwardKey) Backward = false;
+  if      (key.keycode == keyUp      ) Up       = false;
+  else if (key.keycode == keyDown    ) Down     = false;
+  else if (key.keycode == keyLeft    ) Left     = false;
+  else if (key.keycode == keyRight   ) Right    = false;
+  else if (key.keycode == keyForward ) Forward  = false;
+  else if (key.keycode == keyBackward) Backward = false;
+}
+
+void ofxFirstPersonCamera::update(ofEventArgs& args)
+{
+  if (Up||Down||Left||Right||Forward||Backward) updateCamPosition();
 }
 
 void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
@@ -102,46 +102,29 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxFirstPersonCamera::updateCamPosition()
 {
-  {
-    float P = PAngle * DEG_TO_RAD;
-    float Y = YAngle * DEG_TO_RAD;
-
-    ofVec3f LookVec = ofVec3f(-sin(Y)*cos(P), sin(P), -cos(Y)*cos(P));
-    ofVec3f SideVec = ofVec3f(cos(Y), 0, -sin(Y));
-
-    move(ofVec3f(0, 1, 0) * (Up-Down) * movespeed +
-         LookVec * (Forward-Backward) * movespeed +
-         SideVec * (Right-Left)       * movespeed);
-  }
+  move(getLookAtDir() * movespeed * (Forward-Backward) +
+         getSideDir() * movespeed * (Right-Left) +
+           getUpDir() * movespeed * (Up-Down));
 }
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
   {
-    // Difference between mouse position and center
-    float XDiff = mouse.x - (ofGetWidth () / 2.0f);
-    float YDiff = mouse.y - (ofGetHeight() / 2.0f);
+    // Mouse position and window center difference
+    float xdiff = (ofGetWidth()  / 2.0f) - mouse.x;
+    float ydiff = (ofGetHeight() / 2.0f) - mouse.y;
 
-    XDiff *= sensitivity;
-    YDiff *= sensitivity;
+    // Apply sensitivity
+    xdiff *= sensitivity;
+    ydiff *= sensitivity;
 
-    PAngle -= YDiff;
-    YAngle -= XDiff;
+    // Rotate our camera
+    rotate(xdiff, UpVector);
+    rotate(ydiff, getSideDir());
   }
 
-  // Limit pitch angle to 180 degrees
-  PAngle = ofClamp(PAngle, -90.0f, 90.0f);
-
+  // Set cursor position to the center of the window
   glfwSetCursorPos(ofxGetGLFWWindow(), ofGetWidth()/2, ofGetHeight()/2);
-
-  // Room for improvements: make roll
-  {
-    ofMatrix4x4 View;
-    View.rotate(PAngle, 1, 0, 0);
-    View.rotate(YAngle, 0, 1, 0);
-    View.translate(getPosition());
-    setTransformMatrix(View);
-  }
 }
 
 bool ofxFirstPersonCamera::isControlled()

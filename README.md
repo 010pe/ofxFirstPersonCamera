@@ -65,7 +65,7 @@ void ofApp::draw()
 {
   cam.begin();
 
-  ofDrawSphere(10.0f);
+    ofDrawGrid(10.0f, 10, true);
 
   cam.end();
 }

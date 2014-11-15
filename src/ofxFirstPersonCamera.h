@@ -15,14 +15,18 @@ class ofxFirstPersonCamera : public ofCamera
     void enableControl  ();
     void disableControl ();
 
-    int upKey       = GLFW_KEY_E;
-    int downKey     = GLFW_KEY_C;
-    int leftKey     = GLFW_KEY_A;
-    int rightKey    = GLFW_KEY_D;
-    int forwardKey  = GLFW_KEY_W;
-    int backwardKey = GLFW_KEY_S;
+    int keyUp        = GLFW_KEY_E;
+    int keyDown      = GLFW_KEY_C;
+    int keyLeft      = GLFW_KEY_A;
+    int keyRight     = GLFW_KEY_D;
+    int keyForward   = GLFW_KEY_W;
+    int keyBackward  = GLFW_KEY_S;
+    int keyRollLeft  = GLFW_KEY_Q;
+    int keyRollRight = GLFW_KEY_R;
+    int keyRollReset = GLFW_KEY_F;
 
     float movespeed   = 1.00f;
+    float rollspeed   = 2.00f;
     float sensitivity = 0.10f;
 
   protected:
@@ -42,13 +46,12 @@ class ofxFirstPersonCamera : public ofCamera
     bool IsRegistered;
     bool IsControlled;
 
-    float PAngle;
-    float YAngle;
-
     bool Up;
     bool Down;
     bool Left;
     bool Right;
     bool Forward;
     bool Backward;
+
+    ofVec3f UpVector;
 };
