@@ -9,7 +9,7 @@ Dependencies
 ------------
 
 #### 1. OF 0.9.0 and C++11
-#### 3. [ofxGLFWUsefulFunctions](https://github.com/procedural/ofxGLFWUsefulFunctions)
+#### 2. [ofxGLFWUsefulFunctions](https://github.com/procedural/ofxGLFWUsefulFunctions)
 
 Compiling
 ---------
@@ -46,7 +46,7 @@ class ofApp : public ofBaseApp
 };
 ```
 
-And enable camera control in `ofApp.cpp` on `setup` call:
+And enable camera control in `ofApp.cpp` on `update` call:
 
 ```cpp
 #include "ofApp.h"

@@ -26,7 +26,7 @@ class ofxFirstPersonCamera : public ofCamera
     int keyRollReset = GLFW_KEY_F;
 
     float movespeed   = 1.00f;
-    float rollspeed   = 2.00f;
+    float rollspeed   = 1.00f;
     float sensitivity = 0.10f;
 
   protected:
@@ -38,6 +38,7 @@ class ofxFirstPersonCamera : public ofCamera
     void mouseMoved   (ofMouseEventArgs&);
     void mouseDragged (ofMouseEventArgs&);
 
+    void updateCamRoll     ();
     void updateCamPosition ();
     void updateCamRotation (ofMouseEventArgs&);
 
@@ -52,6 +53,9 @@ class ofxFirstPersonCamera : public ofCamera
     bool Right;
     bool Forward;
     bool Backward;
+    bool RollLeft;
+    bool RollRight;
+    bool RollReset;
 
     ofVec3f UpVector;
 };
