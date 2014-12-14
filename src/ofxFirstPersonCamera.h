@@ -46,6 +46,7 @@ class ofxFirstPersonCamera : public ofCamera
 
     bool IsRegistered;
     bool IsControlled;
+    bool IsMouseInited;
 
     bool Up;
     bool Down;

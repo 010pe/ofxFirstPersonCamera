@@ -38,27 +38,21 @@ Include header file in `ofApp.h`, add a camera instance as a public member of a 
 class ofApp : public ofBaseApp
 {
   public:
-    void setup  ();
-    void update ();
-    void draw   ();
+    void setup();
+    void draw ();
 
     ofxFirstPersonCamera cam;
 };
 ```
 
-And enable camera control in `ofApp.cpp` on `update` call:
+And enable camera control in `ofApp.cpp` on `setup` call:
 
 ```cpp
 #include "ofApp.h"
 
 void ofApp::setup()
 {
-}
-
-void ofApp::update()
-{
-  if (!cam.isControlled())
-      cam.enableControl();
+  cam.enableControl();
 }
 
 void ofApp::draw()

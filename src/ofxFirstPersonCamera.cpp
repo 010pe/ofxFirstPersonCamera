@@ -2,8 +2,9 @@
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
 {
-  IsRegistered = false;
-  IsControlled = false;
+  IsRegistered  = false;
+  IsControlled  = false;
+  IsMouseInited = false;
 
   Up        = false;
   Down      = false;
@@ -25,26 +26,24 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
-  IsControlled = true;
-
   ofxHideMouse();
 
   glfwSetCursorPos(ofxGetGLFWWindow(), ofGetWidth()/2, ofGetHeight()/2);
 
   if (!IsRegistered) {
-    IsRegistered = true;
     ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
     ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
     ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
     ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
     ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+    IsRegistered = true;
   }
+
+  IsControlled = true;
 }
 
 void ofxFirstPersonCamera::disableControl()
 {
-  IsControlled = false;
-
   ofxShowMouse();
 
   Up        = false;
@@ -58,13 +57,15 @@ void ofxFirstPersonCamera::disableControl()
   RollReset = false;
 
   if (IsRegistered) {
-    IsRegistered = false;
     ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
     ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
     ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
     ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
     ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+    IsRegistered = false;
   }
+
+  IsControlled = false;
 }
 
 void ofxFirstPersonCamera::keyPressed(ofKeyEventArgs& key)
@@ -128,8 +129,15 @@ void ofxFirstPersonCamera::updateCamPosition()
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
+  if (!IsMouseInited) {
+    // Fix a first mouse move glitch
+    mouse.x = (ofGetWidth()  / 2.0f);
+    mouse.y = (ofGetHeight() / 2.0f);
+    IsMouseInited = true;
+  }
+
   {
-    // Mouse position and window center difference
+    // Window center and mouse position difference
     float xdiff = (ofGetWidth()  / 2.0f) - mouse.x;
     float ydiff = (ofGetHeight() / 2.0f) - mouse.y;
 
