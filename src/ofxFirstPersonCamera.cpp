@@ -26,11 +26,8 @@ void ofxFirstPersonCamera::enableControl()
 {
   ofxHideMouse();
 
-  {
-    int w; int h;
-    glfwGetWindowSize(ofxGetGLFWWindow(), &w, &h);
-    glfwSetCursorPos (ofxGetGLFWWindow(), w / 2.0f, h / 2.0f);
-  }
+  glfwSetCursorPos(ofxGetGLFWWindow(), ofxGetGLFWWidth()  / 2.0f,
+                                       ofxGetGLFWHeight() / 2.0f);
 
   if (!IsRegistered) {
     ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
@@ -131,20 +128,17 @@ void ofxFirstPersonCamera::updateCamPosition()
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
-  int w; int h;
-  glfwGetWindowSize(ofxGetGLFWWindow(), &w, &h);
-
   if (!IsMouseInited) {
     // Fix a first mouse move glitch
-    mouse.x = (w / 2.0f);
-    mouse.y = (h / 2.0f);
+    mouse.x = (ofxGetGLFWWidth()  / 2.0f);
+    mouse.y = (ofxGetGLFWHeight() / 2.0f);
     IsMouseInited = true;
   }
 
   {
     // Window center and mouse position difference
-    float xdiff = (w / 2.0f) - mouse.x;
-    float ydiff = (h / 2.0f) - mouse.y;
+    float xdiff = (ofxGetGLFWWidth()  / 2.0f) - mouse.x;
+    float ydiff = (ofxGetGLFWHeight() / 2.0f) - mouse.y;
 
     // Apply sensitivity
     xdiff *= sensitivity;
@@ -156,7 +150,8 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
   }
 
   // Set cursor position to the center of the window
-  glfwSetCursorPos (ofxGetGLFWWindow(), w / 2.0f, h / 2.0f);
+  glfwSetCursorPos(ofxGetGLFWWindow(), ofxGetGLFWWidth()  / 2.0f,
+                                       ofxGetGLFWHeight() / 2.0f);
 }
 
 bool ofxFirstPersonCamera::isControlled()
