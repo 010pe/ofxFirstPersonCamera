@@ -26,8 +26,7 @@ void ofxFirstPersonCamera::enableControl()
 {
   ofxHideMouse();
 
-  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth()  / 2.0f,
-                                       ofxGLFWGetHeight() / 2.0f);
+  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth() / 2.0f, ofxGLFWGetHeight() / 2.0f);
 
   if (!IsRegistered) {
     ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
@@ -150,8 +149,7 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
   }
 
   // Set cursor position to the center of the window
-  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth()  / 2.0f,
-                                       ofxGLFWGetHeight() / 2.0f);
+  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth() / 2.0f, ofxGLFWGetHeight() / 2.0f);
 }
 
 bool ofxFirstPersonCamera::isControlled()
