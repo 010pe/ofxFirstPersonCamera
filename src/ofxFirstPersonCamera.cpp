@@ -15,8 +15,6 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
   RollLeft  = false;
   RollRight = false;
   RollReset = false;
-
-  UpVector = ofVec3f(0, 1, 0);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
@@ -28,7 +26,8 @@ void ofxFirstPersonCamera::enableControl()
 {
   ofxHideMouse();
 
-  glfwSetCursorPos(ofxGetGLFWWindow(), ofGetWidth() / 2.0f, ofGetHeight() / 2.0f);
+  glfwSetCursorPos(ofxGetGLFWWindow(), ofxGetGLFWWidth()  / 2.0f,
+                                       ofxGetGLFWHeight() / 2.0f);
 
   if (!IsRegistered) {
     ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
@@ -115,9 +114,9 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxFirstPersonCamera::updateCamRoll()
 {
-  if (RollLeft)  { roll(  rollspeed * (60.0f / ofGetFrameRate()) ); UpVector = getUpDir(); }
-  if (RollRight) { roll( -rollspeed * (60.0f / ofGetFrameRate()) ); UpVector = getUpDir(); }
-  if (RollReset) { roll( -getRoll() ); UpVector = ofVec3f(0, 1, 0); }
+  if (RollLeft)  { roll(  rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
+  if (RollRight) { roll( -rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
+  if (RollReset) { roll( -getRoll() ); upvector = ofVec3f(0, 1, 0); }
 }
 
 void ofxFirstPersonCamera::updateCamPosition()
@@ -131,27 +130,28 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
   if (!IsMouseInited) {
     // Fix a first mouse move glitch
-    mouse.x = (ofGetWidth()  / 2.0f);
-    mouse.y = (ofGetHeight() / 2.0f);
+    mouse.x = (ofxGetGLFWWidth()  / 2.0f);
+    mouse.y = (ofxGetGLFWHeight() / 2.0f);
     IsMouseInited = true;
   }
 
   {
     // Window center and mouse position difference
-    float xdiff = (ofGetWidth()  / 2.0f) - mouse.x;
-    float ydiff = (ofGetHeight() / 2.0f) - mouse.y;
+    float xdiff = (ofxGetGLFWWidth()  / 2.0f) - mouse.x;
+    float ydiff = (ofxGetGLFWHeight() / 2.0f) - mouse.y;
 
     // Apply sensitivity
     xdiff *= sensitivity;
     ydiff *= sensitivity;
 
     // Rotate our camera
-    rotate(xdiff, UpVector);
+    rotate(xdiff, upvector);
     rotate(ydiff, getSideDir());
   }
 
   // Set cursor position to the center of the window
-  glfwSetCursorPos(ofxGetGLFWWindow(), ofGetWidth() / 2.0f, ofGetHeight() / 2.0f);
+  glfwSetCursorPos(ofxGetGLFWWindow(), ofxGetGLFWWidth()  / 2.0f,
+                                       ofxGetGLFWHeight() / 2.0f);
 }
 
 bool ofxFirstPersonCamera::isControlled()
