@@ -15,8 +15,6 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
   RollLeft  = false;
   RollRight = false;
   RollReset = false;
-
-  UpVector = ofVec3f(0, 1, 0);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
@@ -119,9 +117,9 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxFirstPersonCamera::updateCamRoll()
 {
-  if (RollLeft)  { roll(  rollspeed * (60.0f / ofGetFrameRate()) ); UpVector = getUpDir(); }
-  if (RollRight) { roll( -rollspeed * (60.0f / ofGetFrameRate()) ); UpVector = getUpDir(); }
-  if (RollReset) { roll( -getRoll() ); UpVector = ofVec3f(0, 1, 0); }
+  if (RollLeft)  { roll(  rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
+  if (RollRight) { roll( -rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
+  if (RollReset) { roll( -getRoll() ); upvector = ofVec3f(0, 1, 0); }
 }
 
 void ofxFirstPersonCamera::updateCamPosition()
@@ -153,7 +151,7 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
     ydiff *= sensitivity;
 
     // Rotate our camera
-    rotate(xdiff, UpVector);
+    rotate(xdiff, upvector);
     rotate(ydiff, getSideDir());
   }
 

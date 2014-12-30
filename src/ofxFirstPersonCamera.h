@@ -29,6 +29,8 @@ class ofxFirstPersonCamera : public ofCamera
     float rollspeed   = 1.00f;
     float sensitivity = 0.10f;
 
+    ofVec3f upvector = ofVec3f(0, 1, 0);
+
   protected:
 
     void update (ofEventArgs&);
@@ -57,6 +59,4 @@ class ofxFirstPersonCamera : public ofCamera
     bool RollLeft;
     bool RollRight;
     bool RollReset;
-
-    ofVec3f UpVector;
 };
