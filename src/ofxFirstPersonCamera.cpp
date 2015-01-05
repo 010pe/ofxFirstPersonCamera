@@ -2,7 +2,6 @@
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
 {
-  IsRegistered  = false;
   IsControlled  = false;
   IsMouseInited = false;
 
@@ -28,14 +27,11 @@ void ofxFirstPersonCamera::enableControl()
 
   glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth() / 2.0f, ofxGLFWGetHeight() / 2.0f);
 
-  if (!IsRegistered) {
-    ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-    ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-    ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-    ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-    ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
-    IsRegistered = true;
-  }
+  ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
+  ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 
   IsControlled = true;
 }
@@ -54,14 +50,11 @@ void ofxFirstPersonCamera::disableControl()
   RollRight = false;
   RollReset = false;
 
-  if (IsRegistered) {
-    ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-    ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-    ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-    ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-    ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
-    IsRegistered = false;
-  }
+  ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
+  ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 
   IsControlled = false;
 }
