@@ -9,7 +9,7 @@ Dependencies
 ------------
 
 #### 1. OF 0.9.0 and C++11
-#### 2. [ofxGLFWUsefulFunctions](https://github.com/procedural/ofxGLFWUsefulFunctions)
+#### 2. [ofxGLFWUsefulFunctions](https://github.com/ofnode/ofxGLFWUsefulFunctions)
 
 Compiling
 ---------
@@ -69,11 +69,11 @@ void ofApp::draw()
 Examples
 --------
 
-### [example-ofxFirstPersonCamera](https://github.com/procedural/example-ofxFirstPersonCamera)
+### [example-ofxFirstPersonCamera](https://github.com/ofnode/example-ofxFirstPersonCamera)
 
 
   [1]: https://github.com/openframeworks/openFrameworks
   [2]: https://github.com/ofZach/projectGeneratorSimple
-  [3]: https://github.com/procedural/of
-  [4]: https://github.com/procedural/ofApp
+  [3]: https://github.com/ofnode/of
+  [4]: https://github.com/ofnode/ofApp
 
