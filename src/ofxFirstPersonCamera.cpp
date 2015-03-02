@@ -118,8 +118,7 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxFirstPersonCamera::updateCamRoll()
 {
-  float fps = ofGetFrameRate();
-  float angle = rollspeed * (60.0f / fps);
+  float angle = rollspeed * (60.0f / ofGetFrameRate());
 
   if (RollLeft)  { roll(  angle ); upvector = getUpDir(); }
   if (RollRight) { roll( -angle ); upvector = getUpDir(); }
@@ -128,8 +127,7 @@ void ofxFirstPersonCamera::updateCamRoll()
 
 void ofxFirstPersonCamera::updateCamPosition()
 {
-  float fps = ofGetFrameRate();
-  float speed = movespeed * (60.0f / fps);
+  float speed = movespeed * (60.0f / ofGetFrameRate());
 
   move(getLookAtDir() * speed * (Forward-Backward) +
          getSideDir() * speed * (Right-Left) +
