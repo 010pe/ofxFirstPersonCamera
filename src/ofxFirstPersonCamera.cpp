@@ -14,6 +14,13 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
   RollLeft  = false;
   RollRight = false;
   RollReset = false;
+
+  Window = ofxGetGLFWWindow();
+
+  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
+
+  WinCenterX = WinWidth  / 2.0f;
+  WinCenterY = WinHeight / 2.0f;
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
@@ -25,13 +32,14 @@ void ofxFirstPersonCamera::enableControl()
 {
   ofxHideMouse();
 
-  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth() / 2.0f, ofxGLFWGetHeight() / 2.0f);
+  glfwSetCursorPos(Window, WinCenterX, WinCenterY);
 
-  ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-  ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  ofAddListener(ofEvents().update       , this, &ofxFirstPersonCamera::update);
+  ofAddListener(ofEvents().keyPressed   , this, &ofxFirstPersonCamera::keyPressed);
+  ofAddListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
+  ofAddListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
+  ofAddListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
+  ofAddListener(ofEvents().windowResized, this, &ofxFirstPersonCamera::windowResized);
 
   IsControlled = true;
 }
@@ -50,11 +58,12 @@ void ofxFirstPersonCamera::disableControl()
   RollRight = false;
   RollReset = false;
 
-  ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-  ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  ofRemoveListener(ofEvents().update       , this, &ofxFirstPersonCamera::update);
+  ofRemoveListener(ofEvents().keyPressed   , this, &ofxFirstPersonCamera::keyPressed);
+  ofRemoveListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
+  ofRemoveListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
+  ofRemoveListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
+  ofRemoveListener(ofEvents().windowResized, this, &ofxFirstPersonCamera::windowResized);
 
   IsControlled = false;
 }
@@ -104,33 +113,44 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
   updateCamRotation(mouse);
 }
 
+void ofxFirstPersonCamera::windowResized(ofResizeEventArgs& window)
+{
+  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
+}
+
 void ofxFirstPersonCamera::updateCamRoll()
 {
-  if (RollLeft)  { roll(  rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
-  if (RollRight) { roll( -rollspeed * (60.0f / ofGetFrameRate()) ); upvector = getUpDir(); }
+  float fps = ofGetFrameRate();
+  float angle = rollspeed * (60.0f / fps);
+
+  if (RollLeft)  { roll(  angle ); upvector = getUpDir(); }
+  if (RollRight) { roll( -angle ); upvector = getUpDir(); }
   if (RollReset) { roll( -getRoll() ); upvector = ofVec3f(0, 1, 0); }
 }
 
 void ofxFirstPersonCamera::updateCamPosition()
 {
-  move(getLookAtDir() * ( movespeed * (60.0f / ofGetFrameRate()) ) * (Forward-Backward) +
-         getSideDir() * ( movespeed * (60.0f / ofGetFrameRate()) ) * (Right-Left) +
-           getUpDir() * ( movespeed * (60.0f / ofGetFrameRate()) ) * (Up-Down));
+  float fps = ofGetFrameRate();
+  float speed = movespeed * (60.0f / fps);
+
+  move(getLookAtDir() * speed * (Forward-Backward) +
+         getSideDir() * speed * (Right-Left) +
+           getUpDir() * speed * (Up-Down));
 }
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
   if (!IsMouseInited) {
     // Fix glitch at first mouse move
-    mouse.x = (ofxGLFWGetWidth()  / 2.0f);
-    mouse.y = (ofxGLFWGetHeight() / 2.0f);
+    mouse.x = WinCenterX;
+    mouse.y = WinCenterY;
     IsMouseInited = true;
   }
 
   {
     // Window center and mouse position difference
-    float xdiff = (ofxGLFWGetWidth()  / 2.0f) - mouse.x;
-    float ydiff = (ofxGLFWGetHeight() / 2.0f) - mouse.y;
+    float xdiff = WinCenterX - mouse.x;
+    float ydiff = WinCenterY - mouse.y;
 
     // Apply sensitivity
     xdiff *= sensitivity;
@@ -142,7 +162,7 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
   }
 
   // Set cursor position to the center of the window
-  glfwSetCursorPos(ofxGLFWGetWindow(), ofxGLFWGetWidth() / 2.0f, ofxGLFWGetHeight() / 2.0f);
+  glfwSetCursorPos(Window, WinCenterX, WinCenterY);
 }
 
 bool ofxFirstPersonCamera::isControlled()

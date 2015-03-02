@@ -76,4 +76,3 @@ Examples
   [2]: https://github.com/ofZach/projectGeneratorSimple
   [3]: https://github.com/ofnode/of
   [4]: https://github.com/ofnode/ofApp
-

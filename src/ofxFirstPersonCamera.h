@@ -35,10 +35,11 @@ class ofxFirstPersonCamera : public ofCamera
 
     void update (ofEventArgs&);
 
-    void keyPressed   (ofKeyEventArgs&);
-    void keyReleased  (ofKeyEventArgs&);
-    void mouseMoved   (ofMouseEventArgs&);
-    void mouseDragged (ofMouseEventArgs&);
+    void keyPressed    (ofKeyEventArgs&);
+    void keyReleased   (ofKeyEventArgs&);
+    void mouseMoved    (ofMouseEventArgs&);
+    void mouseDragged  (ofMouseEventArgs&);
+    void windowResized (ofResizeEventArgs&);
 
     void updateCamRoll     ();
     void updateCamPosition ();
@@ -58,4 +59,12 @@ class ofxFirstPersonCamera : public ofCamera
     bool RollLeft;
     bool RollRight;
     bool RollReset;
+
+    int  WinWidth;
+    int  WinHeight;
+
+    int  WinCenterX;
+    int  WinCenterY;
+
+    GLFWwindow *Window;
 };
