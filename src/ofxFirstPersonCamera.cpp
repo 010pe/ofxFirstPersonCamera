@@ -116,6 +116,9 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 void ofxFirstPersonCamera::windowResized(ofResizeEventArgs& window)
 {
   glfwGetWindowSize(Window, &WinWidth, &WinHeight);
+
+  WinCenterX = WinWidth  / 2.0f;
+  WinCenterY = WinHeight / 2.0f;
 }
 
 void ofxFirstPersonCamera::updateCamRoll()
