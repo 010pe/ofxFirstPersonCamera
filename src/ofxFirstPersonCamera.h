@@ -39,7 +39,6 @@ class ofxFirstPersonCamera : public ofCamera
     void keyReleased   (ofKeyEventArgs&);
     void mouseMoved    (ofMouseEventArgs&);
     void mouseDragged  (ofMouseEventArgs&);
-    void windowResized (ofResizeEventArgs&);
 
     void updateCamRoll     ();
     void updateCamPosition ();

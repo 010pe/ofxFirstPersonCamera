@@ -32,6 +32,11 @@ void ofxFirstPersonCamera::enableControl()
 {
   ofxHideMouse();
 
+  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
+
+  WinCenterX = WinWidth  / 2.0f;
+  WinCenterY = WinHeight / 2.0f;
+
   glfwSetCursorPos(Window, WinCenterX, WinCenterY);
 
   ofAddListener(ofEvents().update       , this, &ofxFirstPersonCamera::update);
@@ -39,7 +44,6 @@ void ofxFirstPersonCamera::enableControl()
   ofAddListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
   ofAddListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
   ofAddListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
-  ofAddListener(ofEvents().windowResized, this, &ofxFirstPersonCamera::windowResized);
 
   IsControlled = true;
 }
@@ -63,7 +67,6 @@ void ofxFirstPersonCamera::disableControl()
   ofRemoveListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
   ofRemoveListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
   ofRemoveListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
-  ofRemoveListener(ofEvents().windowResized, this, &ofxFirstPersonCamera::windowResized);
 
   IsControlled = false;
 }
@@ -111,14 +114,6 @@ void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
 void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 {
   updateCamRotation(mouse);
-}
-
-void ofxFirstPersonCamera::windowResized(ofResizeEventArgs& window)
-{
-  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
-
-  WinCenterX = WinWidth  / 2.0f;
-  WinCenterY = WinHeight / 2.0f;
 }
 
 void ofxFirstPersonCamera::updateCamRoll()
