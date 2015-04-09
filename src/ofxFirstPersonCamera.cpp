@@ -136,8 +136,7 @@ void ofxFirstPersonCamera::updateCamPosition()
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
-  if (!IsMouseInited) {
-    // Fix glitch at first mouse move
+  if (!IsMouseInited) { // This fixes glitch at first mouse move
     mouse.x = WinCenterX;
     mouse.y = WinCenterY;
     IsMouseInited = true;
