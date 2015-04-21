@@ -25,7 +25,7 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
 {
-  disableControl();
+  if(ofxGetGLFWWindow()) disableControl();
 }
 
 void ofxFirstPersonCamera::enableControl()
