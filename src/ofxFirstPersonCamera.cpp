@@ -30,7 +30,7 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
-  ofxHideMouse();
+  ofxDisableCursor();
 
   glfwGetWindowSize(Window, &WinWidth, &WinHeight);
 
@@ -50,7 +50,7 @@ void ofxFirstPersonCamera::enableControl()
 
 void ofxFirstPersonCamera::disableControl()
 {
-  ofxShowMouse();
+  ofxEnableCursor();
 
   Up        = false;
   Down      = false;
