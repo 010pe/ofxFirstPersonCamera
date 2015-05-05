@@ -14,13 +14,13 @@ Dependencies
 Compiling
 ---------
 
-For [openFrameworks][1]:
+For [openFrameworks](https://github.com/openframeworks/openFrameworks):
 
-Download and extract folder to your `openFrameworks/addons` directory. Go to `openFrameworks/apps/projectGenerator/projectGeneratorSimple` folder and build it if it's not compiled already. Then go to relative `bin` folder and run [projectGeneratorSimple][2]. Select this addon in the list of non-core addons. When you finish generating project folder, you can find it in `openFrameworks/apps/myApps` directory, `mySketch` is default name for it.
+[See wiki](https://github.com/ofnode/of/wiki/Compiling-ofApp-with-vanilla-openFrameworks)
 
-For [CMake-based openFrameworks][3]:
+For [CMake-based openFrameworks](https://github.com/ofnode/of):
 
-Add this repo as a git submodule to your [app][4] folder and use `ofxaddon` command in `CMakeLists.txt`.
+Add this repo as a git submodule to your [ofApp](https://github.com/ofnode/ofApp) folder and use `ofxaddon` command in `CMakeLists.txt`.
 
 
 How to use
@@ -70,9 +70,3 @@ Examples
 --------
 
 ### [example-ofxFirstPersonCamera](https://github.com/ofnode/example-ofxFirstPersonCamera)
-
-
-  [1]: https://github.com/openframeworks/openFrameworks
-  [2]: https://github.com/ofZach/projectGeneratorSimple
-  [3]: https://github.com/ofnode/of
-  [4]: https://github.com/ofnode/ofApp
