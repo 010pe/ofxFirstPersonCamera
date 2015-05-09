@@ -1,36 +1,41 @@
 #include "ofxFirstPersonCamera.h"
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
+:keyUp        (GLFW_KEY_E)
+,keyDown      (GLFW_KEY_C)
+,keyLeft      (GLFW_KEY_A)
+,keyRight     (GLFW_KEY_D)
+,keyForward   (GLFW_KEY_W)
+,keyBackward  (GLFW_KEY_S)
+,keyRollLeft  (GLFW_KEY_Q)
+,keyRollRight (GLFW_KEY_R)
+,keyRollReset (GLFW_KEY_F)
+,movespeed    (1.00f)
+,rollspeed    (1.00f)
+,sensitivity  (0.10f)
+,upvector     (0,1,0)
 {
-  IsControlled  = false;
-  IsMouseInited = false;
-
-  Up        = false;
-  Down      = false;
-  Left      = false;
-  Right     = false;
-  Forward   = false;
-  Backward  = false;
-  RollLeft  = false;
-  RollRight = false;
-  RollReset = false;
-
-  Window = ofxGetGLFWWindow();
-
-  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
-
-  WinCenterX = WinWidth  / 2.0f;
-  WinCenterY = WinHeight / 2.0f;
+  ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
+  ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
 {
-  if(ofxGetGLFWWindow()) disableControl();
+  ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
+  ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 }
 
 void ofxFirstPersonCamera::enableControl()
 {
   ofxDisableCursor();
+
+  Window = ofxGetGLFWWindow();
 
   glfwGetWindowSize(Window, &WinWidth, &WinHeight);
 
@@ -39,34 +44,12 @@ void ofxFirstPersonCamera::enableControl()
 
   glfwSetCursorPos(Window, WinCenterX, WinCenterY);
 
-  ofAddListener(ofEvents().update       , this, &ofxFirstPersonCamera::update);
-  ofAddListener(ofEvents().keyPressed   , this, &ofxFirstPersonCamera::keyPressed);
-  ofAddListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
-  ofAddListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
-  ofAddListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
-
   IsControlled = true;
 }
 
 void ofxFirstPersonCamera::disableControl()
 {
   ofxEnableCursor();
-
-  Up        = false;
-  Down      = false;
-  Left      = false;
-  Right     = false;
-  Forward   = false;
-  Backward  = false;
-  RollLeft  = false;
-  RollRight = false;
-  RollReset = false;
-
-  ofRemoveListener(ofEvents().update       , this, &ofxFirstPersonCamera::update);
-  ofRemoveListener(ofEvents().keyPressed   , this, &ofxFirstPersonCamera::keyPressed);
-  ofRemoveListener(ofEvents().keyReleased  , this, &ofxFirstPersonCamera::keyReleased);
-  ofRemoveListener(ofEvents().mouseMoved   , this, &ofxFirstPersonCamera::mouseMoved);
-  ofRemoveListener(ofEvents().mouseDragged , this, &ofxFirstPersonCamera::mouseDragged);
 
   IsControlled = false;
 }
@@ -101,6 +84,8 @@ void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& key)
 
 void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
+  if (!IsControlled) return;
+
   if (Up||Down||Left||Right||Forward||Backward) updateCamPosition();
 
   if (RollLeft||RollRight||RollReset) updateCamRoll();
@@ -108,11 +93,15 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
 
 void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
 {
+  if (!IsControlled) return;
+
   updateCamRotation(mouse);
 }
 
 void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 {
+  if (!IsControlled) return;
+
   updateCamRotation(mouse);
 }
 

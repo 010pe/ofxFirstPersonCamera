@@ -15,21 +15,21 @@ class ofxFirstPersonCamera : public ofCamera
     void enableControl  ();
     void disableControl ();
 
-    int keyUp        = GLFW_KEY_E;
-    int keyDown      = GLFW_KEY_C;
-    int keyLeft      = GLFW_KEY_A;
-    int keyRight     = GLFW_KEY_D;
-    int keyForward   = GLFW_KEY_W;
-    int keyBackward  = GLFW_KEY_S;
-    int keyRollLeft  = GLFW_KEY_Q;
-    int keyRollRight = GLFW_KEY_R;
-    int keyRollReset = GLFW_KEY_F;
+    int keyUp;
+    int keyDown;
+    int keyLeft;
+    int keyRight;
+    int keyForward;
+    int keyBackward;
+    int keyRollLeft;
+    int keyRollRight;
+    int keyRollReset;
 
-    float movespeed   = 1.00f;
-    float rollspeed   = 1.00f;
-    float sensitivity = 0.10f;
+    float movespeed;
+    float rollspeed;
+    float sensitivity;
 
-    ofVec3f upvector = ofVec3f(0, 1, 0);
+    ofVec3f upvector;
 
   protected:
 
