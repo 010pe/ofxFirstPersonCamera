@@ -2,7 +2,9 @@ ofxFirstPersonCamera
 ====================
 
 
-Lightweight camera class that replicates camera controls of first person video games. It hides cursor on activation and has reassignable keys. Tested on Linux and Windows, should work on Mac as well.
+Lightweight camera class that replicates camera controls of first person video games. It uses mouse to look around, hides cursor on activation and has reassignable keys which by default set to `WASD` for moving the camera, `E` and `C` to move camera up and down, `Q` and `R` to roll left and right and `F` to reset camera's up vector.
+
+Tested on Linux and Windows, should work on Mac as well.
 
 
 Dependencies
