@@ -11,7 +11,6 @@ Dependencies
 ------------
 
 #### 1. OF 0.9.0 and C++11
-#### 2. [ofxGLFWUsefulFunctions](https://github.com/ofnode/ofxGLFWUsefulFunctions)
 
 Compiling
 ---------
@@ -33,7 +32,7 @@ Include header file in `ofApp.h`, add a camera instance as a public member of a 
 ```cpp
 #pragma once
 
-#include <ofMain.h>
+#include "ofMain.h"
 
 #include "ofxFirstPersonCamera.h"
 
