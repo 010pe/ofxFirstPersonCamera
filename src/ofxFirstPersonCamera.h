@@ -2,8 +2,6 @@
 
 #include "ofMain.h"
 
-#include "ofxGLFWUsefulFunctions.h"
-
 class ofxFirstPersonCamera : public ofCamera
 {
   public:
@@ -65,5 +63,5 @@ class ofxFirstPersonCamera : public ofCamera
     int  WinCenterX;
     int  WinCenterY;
 
-    GLFWwindow *Window;
+    GLFWwindow* GLFWWindow;
 };

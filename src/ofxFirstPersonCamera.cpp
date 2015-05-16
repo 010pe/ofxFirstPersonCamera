@@ -33,23 +33,38 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
-  ofxDisableCursor();
+  GLFWWindow = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
 
-  Window = ofxGetGLFWWindow();
+  glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-  glfwGetWindowSize(Window, &WinWidth, &WinHeight);
+# ifdef TARGET_LINUX
+  Display* X11Display = ofGetX11Display();
+  Window X11Window = ofGetX11Window();
+  const char Nil[] = {0};
+  XColor Col;
+  Pixmap Pix = XCreateBitmapFromData(X11Display, X11Window, Nil, 1, 1);
+  Cursor Cur = XCreatePixmapCursor(X11Display, Pix, Pix, &Col, &Col, 0, 0);
+  XDefineCursor(X11Display, X11Window, Cur);
+  XFreeCursor(X11Display, Cur);
+# endif
+
+  glfwGetWindowSize(GLFWWindow, &WinWidth, &WinHeight);
 
   WinCenterX = WinWidth  / 2.0f;
   WinCenterY = WinHeight / 2.0f;
 
-  glfwSetCursorPos(Window, WinCenterX, WinCenterY);
+  glfwSetCursorPos(GLFWWindow, WinCenterX, WinCenterY);
 
   IsControlled = true;
 }
 
 void ofxFirstPersonCamera::disableControl()
 {
-  ofxEnableCursor();
+  glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+# ifdef TARGET_LINUX
+  XUndefineCursor(ofGetX11Display(), ofGetX11Window());
+# endif
 
   IsControlled = false;
 }
@@ -146,7 +161,7 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
   }
 
   // Set cursor position to the center of the window
-  glfwSetCursorPos(Window, WinCenterX, WinCenterY);
+  glfwSetCursorPos(GLFWWindow, WinCenterX, WinCenterY);
 }
 
 bool ofxFirstPersonCamera::isControlled()
