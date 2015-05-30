@@ -116,46 +116,47 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
   if (!IsControlled) return;
 
-  if (Up||Down||Left||Right||Forward||Backward) updateCamPosition();
+  if (Up||Down||Left||Right||Forward||Backward) this->updateCamPosition();
 
-  if (RollLeft||RollRight||RollReset) updateCamRoll();
+  if (RollLeft||RollRight||RollReset) this->updateCamRoll();
 }
 
 void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
 {
   if (!IsControlled) return;
 
-  updateCamRotation(mouse);
+  this->updateCamRotation(mouse);
 }
 
 void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 {
   if (!IsControlled) return;
 
-  updateCamRotation(mouse);
+  this->updateCamRotation(mouse);
 }
 
 void ofxFirstPersonCamera::updateCamRoll()
 {
   float angle = rollspeed * (60.0f / ofGetFrameRate());
 
-  if (RollLeft)  { roll(  angle ); upvector = getUpDir(); }
-  if (RollRight) { roll( -angle ); upvector = getUpDir(); }
-  if (RollReset) { roll( -getRoll() ); upvector = ofVec3f(0, 1, 0); }
+  if (RollLeft)  { this->roll(  angle ); upvector = this->getUpDir(); }
+  if (RollRight) { this->roll( -angle ); upvector = this->getUpDir(); }
+  if (RollReset) { this->roll( -this->getRoll() ); upvector = ofVec3f(0, 1, 0); }
 }
 
 void ofxFirstPersonCamera::updateCamPosition()
 {
   float speed = movespeed * (60.0f / ofGetFrameRate());
 
-  move(getLookAtDir() * speed * (Forward-Backward) +
-         getSideDir() * speed * (Right-Left) +
-           getUpDir() * speed * (Up-Down));
+  this->move(this->getLookAtDir() * speed * (Forward-Backward) +
+               this->getSideDir() * speed * (Right-Left) +
+                 this->getUpDir() * speed * (Up-Down));
 }
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 {
-  if (!IsMouseInited) { // This fixes glitch at first mouse move
+  // Fixes first mouse move
+  if (!IsMouseInited) {
     mouse.x = WinCenterX;
     mouse.y = WinCenterY;
     IsMouseInited = true;
@@ -171,8 +172,8 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
     ydiff *= sensitivity;
 
     // Rotate our camera
-    rotate(xdiff, upvector);
-    rotate(ydiff, getSideDir());
+    this->rotate(xdiff, upvector);
+    this->rotate(ydiff, this->getSideDir());
   }
 
   // Set cursor position to the center of the window
