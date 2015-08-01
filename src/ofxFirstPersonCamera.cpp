@@ -48,6 +48,8 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
+  if(IsControlled) return;
+
   GLFWWindow = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
 
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -75,6 +77,8 @@ void ofxFirstPersonCamera::enableControl()
 
 void ofxFirstPersonCamera::disableControl()
 {
+  if(!IsControlled) return;
+
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 # ifdef TARGET_LINUX
