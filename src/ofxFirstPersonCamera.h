@@ -47,15 +47,19 @@ class ofxFirstPersonCamera : public ofCamera
     bool IsControlled;
     bool IsMouseInited;
 
-    bool Up;
-    bool Down;
-    bool Left;
-    bool Right;
-    bool Forward;
-    bool Backward;
-    bool RollLeft;
-    bool RollRight;
-    bool RollReset;
+    struct Pressed {
+      bool Up;
+      bool Down;
+      bool Left;
+      bool Right;
+      bool Forward;
+      bool Backward;
+      bool RollLeft;
+      bool RollRight;
+      bool RollReset;
+    };
+
+    Pressed Actions;
 
     int  WinWidth;
     int  WinHeight;
