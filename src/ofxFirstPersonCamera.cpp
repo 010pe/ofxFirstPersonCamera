@@ -148,7 +148,9 @@ void ofxFirstPersonCamera::updateCamRoll()
 {
   Pressed go = Actions;
 
+  bool unroll = go.RollReset;
   int rolldir = go.RollLeft - go.RollRight;
+
   if (rolldir != 0) {
     float roll = rollspeed;
     float rate = ofGetFrameRate();
@@ -158,7 +160,7 @@ void ofxFirstPersonCamera::updateCamRoll()
     upvector = updir;
   }
 
-  if (go.RollReset) {
+  if (unroll) {
     float thisroll = this->getRoll();
     this->roll(-thisroll);
     upvector = ofVec3f(0, 1, 0);
