@@ -21,20 +21,22 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
 ,IsControlled  (false)
 ,IsMouseInited (false)
 {
-  ofAddListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-  ofAddListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofAddListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofAddListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofAddListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  auto &events = ofEvents();
+  ofAddListener(events.update      , this, &ofxFirstPersonCamera::update);
+  ofAddListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofAddListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofAddListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofAddListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
 {
-  ofRemoveListener(ofEvents().update      , this, &ofxFirstPersonCamera::update);
-  ofRemoveListener(ofEvents().keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofRemoveListener(ofEvents().keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofRemoveListener(ofEvents().mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofRemoveListener(ofEvents().mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  auto &events = ofEvents();
+  ofRemoveListener(events.update      , this, &ofxFirstPersonCamera::update);
+  ofRemoveListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
+  ofRemoveListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased);
+  ofRemoveListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
+  ofRemoveListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
 }
 
 void ofxFirstPersonCamera::enableControl()
@@ -122,11 +124,8 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
   bool controlled = IsControlled;
   if (!controlled) return;
 
-  Pressed go = Actions;
-
-  if (go.Up||go.Down||go.Left||go.Right||go.Forward||go.Backward) this->updateCamPosition();
-
-  if (go.RollLeft||go.RollRight||go.RollReset) this->updateCamRoll();
+  this->updateCamPosition();
+  this->updateCamRoll();
 }
 
 void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
@@ -168,19 +167,25 @@ void ofxFirstPersonCamera::updateCamRoll()
 
 void ofxFirstPersonCamera::updateCamPosition()
 {
-  float move = movespeed;
-  float rate = ofGetFrameRate();
-  float speed = move * (60.0f / rate);
+  ofVec3f lookdir = this->getLookAtDir();
+  ofVec3f sidedir = this->getSideDir();
+  ofVec3f updir   = this->getUpDir();
 
   Pressed go = Actions;
 
-  ofVec3f lookdir = this->getLookAtDir();
-  ofVec3f sidedir = this->getSideDir();
-  ofVec3f updir = this->getUpDir();
+  float look = go.Forward - go.Backward;
+  float side = go.Right - go.Left;
+  float up   = go.Up - go.Down;
 
-  this->move(lookdir * speed * (go.Forward - go.Backward) +
-             sidedir * speed * (go.Right - go.Left) +
-               updir * speed * (go.Up - go.Down));
+  if (look != 0 || side != 0 || up != 0)
+  {
+    float move  = movespeed;
+    float rate  = ofGetFrameRate();
+    float speed = move * (60.0f / rate);
+    this->move(lookdir * speed * look +
+               sidedir * speed * side +
+                 updir * speed * up);
+  }
 }
 
 void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
@@ -195,24 +200,17 @@ void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
 
   float mouse_x = mouse.x;
   float mouse_y = mouse.y;
+  float sensit = sensitivity;
   float wcent_x = WinCenterX;
   float wcent_y = WinCenterY;
-  // Window center and mouse position difference
-  float xdiff = wcent_x - mouse_x;
-  float ydiff = wcent_y - mouse_y;
-
-  float sensit = sensitivity;
-  // Apply sensitivity
-  xdiff *= sensit;
-  ydiff *= sensit;
+  float xdiff = (wcent_x - mouse_x) * sensit;
+  float ydiff = (wcent_y - mouse_y) * sensit;
 
   ofVec3f upvec = upvector;
   ofVec3f sidev = this->getSideDir();
-  // Rotate our camera
   this->rotate(xdiff, upvec);
   this->rotate(ydiff, sidev);
 
-  // Set cursor position to the center of the window
   glfwSetCursorPos(GLFWWindow, wcent_x, wcent_y);
 }
 
