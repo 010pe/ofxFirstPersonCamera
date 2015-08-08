@@ -1,7 +1,8 @@
 #include "ofxFirstPersonCamera.h"
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
-:upvector      (0,1,0)
+:IsMouseInited (false)
+,upvector      (0,1,0)
 ,movespeed     (1.00f)
 ,rollspeed     (1.00f)
 ,sensitivity   (0.10f)
@@ -14,12 +15,6 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
 ,keyRollLeft   (GLFW_KEY_Q)
 ,keyRollRight  (GLFW_KEY_R)
 ,keyRollReset  (GLFW_KEY_F)
-,WinWidth      (0)
-,WinHeight     (0)
-,WinCenterX    (0)
-,WinCenterY    (0)
-,IsControlled  (false)
-,IsMouseInited (false)
 {
   auto &events = ofEvents();
   ofAddListener(events.update      , this, &ofxFirstPersonCamera::update);
@@ -41,182 +36,155 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
-  if(IsControlled) return;
-
   GLFWWindow = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
 
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 # ifdef TARGET_LINUX
-  Display* X11Display = ofGetX11Display();
-  Window X11Window = ofGetX11Window();
-  const char Nil[] = {0};
-  XColor Col;
-  Pixmap Pix = XCreateBitmapFromData(X11Display, X11Window, Nil, 1, 1);
-  Cursor Cur = XCreatePixmapCursor(X11Display, Pix, Pix, &Col, &Col, 0, 0);
-  XDefineCursor(X11Display, X11Window, Cur);
-  XFreeCursor(X11Display, Cur);
+  Display* x11Display = ofGetX11Display();
+  Window x11Window = ofGetX11Window();
+  const char data[] = {0};
+  Pixmap pixels = XCreateBitmapFromData(x11Display, x11Window, data, 1, 1);
+  XColor color;
+  Cursor cursor = XCreatePixmapCursor(x11Display, pixels, pixels, &color, &color, 0, 0);
+  XDefineCursor(x11Display, x11Window, cursor);
+  XFreeCursor(x11Display, cursor);
 # endif
 
-  glfwGetWindowSize(GLFWWindow, &WinWidth, &WinHeight);
-
-  WinCenterX = WinWidth  / 2.0f;
-  WinCenterY = WinHeight / 2.0f;
-
-  glfwSetCursorPos(GLFWWindow, WinCenterX, WinCenterY);
-
-  IsControlled = true;
+  int win_w;
+  int win_h;
+  auto win = GLFWWindow;
+  glfwGetWindowSize(win, &win_w, &win_h);
+  int win_center_x = win_w / 2.0f;
+  int win_center_y = win_h / 2.0f;
+  glfwSetCursorPos(win, win_center_x, win_center_y);
 }
 
 void ofxFirstPersonCamera::disableControl()
 {
-  if(!IsControlled) return;
-
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 # ifdef TARGET_LINUX
   XUndefineCursor(ofGetX11Display(), ofGetX11Window());
 # endif
-
-  IsControlled = false;
-}
-
-void ofxFirstPersonCamera::keyPressed(ofKeyEventArgs& keys)
-{
-  Pressed go = Actions;
-  int key = keys.keycode;
-
-  if      (key == keyUp       ) go.Up        = true;
-  else if (key == keyDown     ) go.Down      = true;
-  else if (key == keyLeft     ) go.Left      = true;
-  else if (key == keyRight    ) go.Right     = true;
-  else if (key == keyForward  ) go.Forward   = true;
-  else if (key == keyBackward ) go.Backward  = true;
-
-  else if (key == keyRollLeft ) go.RollLeft  = true;
-  else if (key == keyRollRight) go.RollRight = true;
-  else if (key == keyRollReset) go.RollReset = true;
-
-  Actions = go;
-}
-
-void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& keys)
-{
-  Pressed go = Actions;
-  int key = keys.keycode;
-
-  if      (key == keyUp       ) go.Up        = false;
-  else if (key == keyDown     ) go.Down      = false;
-  else if (key == keyLeft     ) go.Left      = false;
-  else if (key == keyRight    ) go.Right     = false;
-  else if (key == keyForward  ) go.Forward   = false;
-  else if (key == keyBackward ) go.Backward  = false;
-
-  else if (key == keyRollLeft ) go.RollLeft  = false;
-  else if (key == keyRollRight) go.RollRight = false;
-  else if (key == keyRollReset) go.RollReset = false;
-
-  Actions = go;
 }
 
 void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
-  bool controlled = IsControlled;
-  if (!controlled) return;
+  { // Roll
+    Pressed act = Actions;
+    bool unroll = act.RollReset;
+    int rolldir = act.RollLeft - act.RollRight;
 
-  this->updateCamPosition();
-  this->updateCamRoll();
-}
+    if (rolldir) {
+      float roll = rollspeed;
+      float rate = ofGetFrameRate();
+      float angle = roll * (60.0f / rate);
+      this->roll(rolldir * angle);
+      upvector = this->getUpDir();
+    }
 
-void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
-{
-  bool controlled = IsControlled;
-  if (!controlled) return;
-
-  this->updateCamRotation(mouse);
-}
-
-void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
-{
-  bool controlled = IsControlled;
-  if (!controlled) return;
-
-  this->updateCamRotation(mouse);
-}
-
-void ofxFirstPersonCamera::updateCamRoll()
-{
-  Pressed go = Actions;
-
-  bool unroll = go.RollReset;
-  int rolldir = go.RollLeft - go.RollRight;
-
-  if (rolldir != 0) {
-    float roll = rollspeed;
-    float rate = ofGetFrameRate();
-    float angle = roll * (60.0f / rate);
-    this->roll(rolldir * angle);
-    ofVec3f updir = this->getUpDir();
-    upvector = updir;
+    if (unroll) {
+      this->roll(-this->getRoll());
+      upvector = ofVec3f(0, 1, 0);
+    }
   }
+  { // Position
+    Pressed act = Actions;
 
-  if (unroll) {
-    float thisroll = this->getRoll();
-    this->roll(-thisroll);
-    upvector = ofVec3f(0, 1, 0);
+    float look = act.Forward - act.Backward;
+    float side = act.Right - act.Left;
+    float up   = act.Up - act.Down;
+
+    if (look != 0 || side != 0 || up != 0)
+    {
+      ofVec3f lookdir = this->getLookAtDir();
+      ofVec3f sidedir = this->getSideDir();
+      ofVec3f updir   = this->getUpDir();
+      float move  = movespeed;
+      float rate  = ofGetFrameRate();
+      float speed = move * (60.0f / rate);
+      this->move(lookdir * speed * look +
+                 sidedir * speed * side +
+                   updir * speed * up);
+    }
   }
 }
 
-void ofxFirstPersonCamera::updateCamPosition()
+void ofxFirstPersonCamera::nodeRotate(ofMouseEventArgs& mouse)
 {
-  ofVec3f lookdir = this->getLookAtDir();
-  ofVec3f sidedir = this->getSideDir();
-  ofVec3f updir   = this->getUpDir();
-
-  Pressed go = Actions;
-
-  float look = go.Forward - go.Backward;
-  float side = go.Right - go.Left;
-  float up   = go.Up - go.Down;
-
-  if (look != 0 || side != 0 || up != 0)
-  {
-    float move  = movespeed;
-    float rate  = ofGetFrameRate();
-    float speed = move * (60.0f / rate);
-    this->move(lookdir * speed * look +
-               sidedir * speed * side +
-                 updir * speed * up);
-  }
-}
-
-void ofxFirstPersonCamera::updateCamRotation(ofMouseEventArgs& mouse)
-{
-  bool mouseIsNotInited = !IsMouseInited;
-  // Fixes first mouse move
-  if (mouseIsNotInited) {
-    mouse.x = WinCenterX;
-    mouse.y = WinCenterY;
-    IsMouseInited = true;
-  }
+  int win_w;
+  int win_h;
+  auto win = GLFWWindow;
+  glfwGetWindowSize(win, &win_w, &win_h);
+  int win_center_x = win_w / 2.0f;
+  int win_center_y = win_h / 2.0f;
 
   float mouse_x = mouse.x;
   float mouse_y = mouse.y;
+  if (!IsMouseInited) {
+  // Fixes first mouse move
+    mouse_x = win_center_x;
+    mouse_y = win_center_y;
+    IsMouseInited = true;
+  }
+
   float sensit = sensitivity;
-  float wcent_x = WinCenterX;
-  float wcent_y = WinCenterY;
-  float xdiff = (wcent_x - mouse_x) * sensit;
-  float ydiff = (wcent_y - mouse_y) * sensit;
+  float xdiff = (win_center_x - mouse_x) * sensit;
+  float ydiff = (win_center_y - mouse_y) * sensit;
 
   ofVec3f upvec = upvector;
   ofVec3f sidev = this->getSideDir();
   this->rotate(xdiff, upvec);
   this->rotate(ydiff, sidev);
 
-  glfwSetCursorPos(GLFWWindow, wcent_x, wcent_y);
+  glfwSetCursorPos(win, win_center_x, win_center_y);
 }
 
-bool ofxFirstPersonCamera::isControlled()
+void ofxFirstPersonCamera::mouseMoved(ofMouseEventArgs& mouse)
 {
-  return IsControlled;
+  nodeRotate(mouse);
+}
+
+void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
+{
+  nodeRotate(mouse);
+}
+
+void ofxFirstPersonCamera::keyPressed(ofKeyEventArgs& keys)
+{
+  Pressed act = Actions;
+  int key = keys.keycode;
+
+  if      (key == keyUp       ) act.Up        = true;
+  else if (key == keyDown     ) act.Down      = true;
+  else if (key == keyLeft     ) act.Left      = true;
+  else if (key == keyRight    ) act.Right     = true;
+  else if (key == keyForward  ) act.Forward   = true;
+  else if (key == keyBackward ) act.Backward  = true;
+
+  else if (key == keyRollLeft ) act.RollLeft  = true;
+  else if (key == keyRollRight) act.RollRight = true;
+  else if (key == keyRollReset) act.RollReset = true;
+
+  Actions = act;
+}
+
+void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& keys)
+{
+  Pressed act = Actions;
+  int key = keys.keycode;
+
+  if      (key == keyUp       ) act.Up        = false;
+  else if (key == keyDown     ) act.Down      = false;
+  else if (key == keyLeft     ) act.Left      = false;
+  else if (key == keyRight    ) act.Right     = false;
+  else if (key == keyForward  ) act.Forward   = false;
+  else if (key == keyBackward ) act.Backward  = false;
+
+  else if (key == keyRollLeft ) act.RollLeft  = false;
+  else if (key == keyRollRight) act.RollRight = false;
+  else if (key == keyRollReset) act.RollReset = false;
+
+  Actions = act;
 }

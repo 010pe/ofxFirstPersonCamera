@@ -2,16 +2,15 @@
 
 #include "ofMain.h"
 
-class ofxFirstPersonCamera : public ofCamera
+class ofxFirstPersonCamera : public ofNode
 {
   public:
 
     ofxFirstPersonCamera();
    ~ofxFirstPersonCamera();
 
-    bool isControlled   ();
-    void enableControl  ();
-    void disableControl ();
+    void enableControl();
+    void disableControl();
 
     int keyUp;
     int keyDown;
@@ -31,21 +30,16 @@ class ofxFirstPersonCamera : public ofCamera
 
   protected:
 
-    void update (ofEventArgs&);
+    void update(ofEventArgs&);
 
-    void keyPressed    (ofKeyEventArgs&);
-    void keyReleased   (ofKeyEventArgs&);
-    void mouseMoved    (ofMouseEventArgs&);
-    void mouseDragged  (ofMouseEventArgs&);
-
-    void updateCamRoll     ();
-    void updateCamPosition ();
-    void updateCamRotation (ofMouseEventArgs&);
+    void keyPressed(ofKeyEventArgs&);
+    void keyReleased(ofKeyEventArgs&);
+    void mouseMoved(ofMouseEventArgs&);
+    void mouseDragged(ofMouseEventArgs&);
 
   private:
 
-    bool IsControlled;
-    bool IsMouseInited;
+    void nodeRotate(ofMouseEventArgs&);
 
     struct Pressed {
       bool Up;
@@ -57,15 +51,9 @@ class ofxFirstPersonCamera : public ofCamera
       bool RollLeft;
       bool RollRight;
       bool RollReset;
-    };
+    } Actions;
 
-    Pressed Actions;
-
-    int  WinWidth;
-    int  WinHeight;
-
-    int  WinCenterX;
-    int  WinCenterY;
+    bool IsMouseInited;
 
     GLFWwindow* GLFWWindow;
 };

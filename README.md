@@ -27,7 +27,7 @@ Add this repo as a git submodule to your [ofApp](https://github.com/ofnode/ofApp
 How to use
 ----------
 
-Include header file in `ofApp.h`, add a camera instance as a public member of a class:
+Include header file in `ofApp.h`, add an instance of `ofxFirstPersonCamera`:
 
 ```cpp
 #pragma once
@@ -42,22 +42,25 @@ class ofApp : public ofBaseApp
     void setup();
     void draw ();
 
-    ofxFirstPersonCamera cam;
+    ofxFirstPersonCamera fpc;
 };
 ```
 
-And enable camera control in `ofApp.cpp` on `setup` call:
+Enable first person camera control in `setup` call and set computed matrix to any ofCamera:
 
 ```cpp
 #include "ofApp.h"
 
 void ofApp::setup()
 {
-  cam.enableControl();
+  fpc.enableControl();
 }
 
 void ofApp::draw()
 {
+  ofCamera cam;
+  cam.setTransformMatrix(fpc.getGlobalTransformMatrix());
+
   cam.begin();
 
     ofDrawGrid(10.0f, 10, true);
