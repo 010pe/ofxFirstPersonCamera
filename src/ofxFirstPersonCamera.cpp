@@ -17,21 +17,21 @@ ofxFirstPersonCamera::ofxFirstPersonCamera()
 ,keyRollReset  (GLFW_KEY_F)
 {
   auto &events = ofEvents();
-  ofAddListener(events.update      , this, &ofxFirstPersonCamera::update);
-  ofAddListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofAddListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofAddListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofAddListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  ofAddListener(events.update      , this, &ofxFirstPersonCamera::update      , OF_EVENT_ORDER_BEFORE_APP);
+  ofAddListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed  , OF_EVENT_ORDER_BEFORE_APP);
+  ofAddListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased , OF_EVENT_ORDER_BEFORE_APP);
+  ofAddListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved  , OF_EVENT_ORDER_BEFORE_APP);
+  ofAddListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged, OF_EVENT_ORDER_BEFORE_APP);
 }
 
 ofxFirstPersonCamera::~ofxFirstPersonCamera()
 {
   auto &events = ofEvents();
-  ofRemoveListener(events.update      , this, &ofxFirstPersonCamera::update);
-  ofRemoveListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed);
-  ofRemoveListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased);
-  ofRemoveListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved);
-  ofRemoveListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged);
+  ofRemoveListener(events.update      , this, &ofxFirstPersonCamera::update      , OF_EVENT_ORDER_BEFORE_APP);
+  ofRemoveListener(events.keyPressed  , this, &ofxFirstPersonCamera::keyPressed  , OF_EVENT_ORDER_BEFORE_APP);
+  ofRemoveListener(events.keyReleased , this, &ofxFirstPersonCamera::keyReleased , OF_EVENT_ORDER_BEFORE_APP);
+  ofRemoveListener(events.mouseMoved  , this, &ofxFirstPersonCamera::mouseMoved  , OF_EVENT_ORDER_BEFORE_APP);
+  ofRemoveListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged, OF_EVENT_ORDER_BEFORE_APP);
 }
 
 void ofxFirstPersonCamera::enableControl()
