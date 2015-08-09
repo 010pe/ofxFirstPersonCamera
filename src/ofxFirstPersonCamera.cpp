@@ -36,6 +36,8 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 void ofxFirstPersonCamera::enableControl()
 {
+  IsControlled = true;
+
   GLFWWindow = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
 
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -62,6 +64,8 @@ void ofxFirstPersonCamera::enableControl()
 
 void ofxFirstPersonCamera::disableControl()
 {
+  IsControlled = false;
+
   glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 # ifdef TARGET_LINUX
@@ -71,6 +75,8 @@ void ofxFirstPersonCamera::disableControl()
 
 void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
+  if(!IsControlled) return;
+
   { // Roll
     Pressed act = Actions;
     bool unroll = act.RollReset;
@@ -113,6 +119,8 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
 
 void ofxFirstPersonCamera::nodeRotate(ofMouseEventArgs& mouse)
 {
+  if(!IsControlled) return;
+
   int win_w;
   int win_h;
   auto win = GLFWWindow;

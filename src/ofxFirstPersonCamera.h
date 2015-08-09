@@ -53,6 +53,7 @@ class ofxFirstPersonCamera : public ofNode
       bool RollReset;
     } Actions;
 
+    bool IsControlled;
     bool IsMouseInited;
 
     GLFWwindow* GLFWWindow;
