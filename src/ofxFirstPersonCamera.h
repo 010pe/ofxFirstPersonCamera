@@ -9,6 +9,7 @@ class ofxFirstPersonCamera : public ofNode
     ofxFirstPersonCamera();
    ~ofxFirstPersonCamera();
 
+    bool isControlled();
     void enableControl();
     void disableControl();
 

@@ -196,3 +196,8 @@ void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& keys)
 
   Actions = act;
 }
+
+bool ofxFirstPersonCamera::isControlled()
+{
+  return IsControlled;
+}
