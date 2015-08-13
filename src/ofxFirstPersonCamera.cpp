@@ -34,6 +34,16 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
   ofRemoveListener(events.mouseDragged, this, &ofxFirstPersonCamera::mouseDragged, OF_EVENT_ORDER_BEFORE_APP);
 }
 
+bool ofxFirstPersonCamera::isControlled()
+{
+  return IsControlled;
+}
+
+void ofxFirstPersonCamera::toggleControl()
+{
+  IsControlled ? disableControl() : enableControl();
+}
+
 void ofxFirstPersonCamera::enableControl()
 {
   IsControlled = true;
@@ -195,9 +205,4 @@ void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& keys)
   else if (key == keyRollReset) act.RollReset = false;
 
   Actions = act;
-}
-
-bool ofxFirstPersonCamera::isControlled()
-{
-  return IsControlled;
 }

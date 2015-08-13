@@ -39,8 +39,8 @@ Include header file in `ofApp.h`, add an instance of `ofxFirstPersonCamera`:
 class ofApp : public ofBaseApp
 {
   public:
-    void setup();
-    void draw ();
+    void draw();
+    void mousePressed(ofMouseEventArgs &mouse);
 
     ofxFirstPersonCamera fpc;
 };
@@ -50,11 +50,6 @@ Enable first person camera control in `setup` call and set computed matrix to an
 
 ```cpp
 #include "ofApp.h"
-
-void ofApp::setup()
-{
-  fpc.enableControl();
-}
 
 void ofApp::draw()
 {
@@ -66,6 +61,11 @@ void ofApp::draw()
     ofDrawGrid(10.0f, 10, true);
 
   cam.end();
+}
+
+void ofApp::mousePressed(ofMouseEventArgs &mouse)
+{
+  fpc.toggleControl();
 }
 ```
 

@@ -10,6 +10,7 @@ class ofxFirstPersonCamera : public ofNode
    ~ofxFirstPersonCamera();
 
     bool isControlled();
+    void toggleControl();
     void enableControl();
     void disableControl();
 
