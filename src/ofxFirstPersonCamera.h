@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-class ofxFirstPersonCamera : public ofNode
+class ofxFirstPersonCamera : public ofCamera
 {
   public:
 
