@@ -153,8 +153,8 @@ void ofxFirstPersonCamera::nodeRotate(ofMouseEventArgs& mouse)
 
   ofVec3f upvec = upvector;
   ofVec3f sidev = this->getSideDir();
-  this->rotate(xdiff, upvec);
   this->rotate(ydiff, sidev);
+  this->rotate(xdiff, upvec);
 
   glfwSetCursorPos(win, win_center_x, win_center_y);
 }
