@@ -1,7 +1,8 @@
 #include "ofxFirstPersonCamera.h"
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
-:m_isMouseInited (false)
+:m_isControlled  (false)
+,m_isMouseInited (false)
 ,upvector        (0,1,0)
 ,movespeed       (1.00f)
 ,rollspeed       (1.00f)
