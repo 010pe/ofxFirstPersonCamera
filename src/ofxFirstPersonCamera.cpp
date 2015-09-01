@@ -1,20 +1,20 @@
 #include "ofxFirstPersonCamera.h"
 
 ofxFirstPersonCamera::ofxFirstPersonCamera()
-:IsMouseInited (false)
-,upvector      (0,1,0)
-,movespeed     (1.00f)
-,rollspeed     (1.00f)
-,sensitivity   (0.10f)
-,keyUp         (GLFW_KEY_E)
-,keyDown       (GLFW_KEY_C)
-,keyLeft       (GLFW_KEY_A)
-,keyRight      (GLFW_KEY_D)
-,keyForward    (GLFW_KEY_W)
-,keyBackward   (GLFW_KEY_S)
-,keyRollLeft   (GLFW_KEY_Q)
-,keyRollRight  (GLFW_KEY_R)
-,keyRollReset  (GLFW_KEY_F)
+:m_isMouseInited (false)
+,upvector        (0,1,0)
+,movespeed       (1.00f)
+,rollspeed       (1.00f)
+,sensitivity     (0.10f)
+,keyUp           (GLFW_KEY_E)
+,keyDown         (GLFW_KEY_C)
+,keyLeft         (GLFW_KEY_A)
+,keyRight        (GLFW_KEY_D)
+,keyForward      (GLFW_KEY_W)
+,keyBackward     (GLFW_KEY_S)
+,keyRollLeft     (GLFW_KEY_Q)
+,keyRollRight    (GLFW_KEY_R)
+,keyRollReset    (GLFW_KEY_F)
 {
   auto &events = ofEvents();
   ofAddListener(events.update      , this, &ofxFirstPersonCamera::update      , OF_EVENT_ORDER_BEFORE_APP);
@@ -36,21 +36,19 @@ ofxFirstPersonCamera::~ofxFirstPersonCamera()
 
 bool ofxFirstPersonCamera::isControlled()
 {
-  return IsControlled;
+  return m_isControlled;
 }
 
 void ofxFirstPersonCamera::toggleControl()
 {
-  IsControlled ? disableControl() : enableControl();
+  m_isControlled ? disableControl() : enableControl();
 }
 
 void ofxFirstPersonCamera::enableControl()
 {
-  IsControlled = true;
+  GLFWwindow *win = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
 
-  GLFWWindow = static_cast<ofAppGLFWWindow*>(ofGetWindowPtr())->getGLFWWindow();
-
-  glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 # ifdef TARGET_LINUX
   Display* x11Display = ofGetX11Display();
@@ -65,32 +63,35 @@ void ofxFirstPersonCamera::enableControl()
 
   int win_w;
   int win_h;
-  auto win = GLFWWindow;
   glfwGetWindowSize(win, &win_w, &win_h);
   int win_center_x = win_w / 2.0f;
   int win_center_y = win_h / 2.0f;
   glfwSetCursorPos(win, win_center_x, win_center_y);
+
+  m_isControlled = true;
+  m_glfwWindow = win;
 }
 
 void ofxFirstPersonCamera::disableControl()
 {
-  IsControlled = false;
-
-  glfwSetInputMode(GLFWWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 # ifdef TARGET_LINUX
   XUndefineCursor(ofGetX11Display(), ofGetX11Window());
 # endif
+
+  m_isControlled = false;
 }
 
 void ofxFirstPersonCamera::update(ofEventArgs& args)
 {
-  if(!IsControlled) return;
+  bool active = m_isControlled;
+  if( !active ) return;
 
   { // Roll
-    Pressed act = Actions;
-    bool unroll = act.RollReset;
-    int rolldir = act.RollLeft - act.RollRight;
+    Actions doa = m_doa;
+    bool unroll = doa.RollReset;
+    int rolldir = doa.RollLeft - doa.RollRight;
 
     if (rolldir) {
       float roll = rollspeed;
@@ -106,11 +107,11 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
     }
   }
   { // Position
-    Pressed act = Actions;
+    Actions doa = m_doa;
 
-    float look = act.Forward - act.Backward;
-    float side = act.Right - act.Left;
-    float up   = act.Up - act.Down;
+    float look = doa.Forward - doa.Backward;
+    float side = doa.Right - doa.Left;
+    float up   = doa.Up - doa.Down;
 
     if (look != 0 || side != 0 || up != 0)
     {
@@ -129,22 +130,24 @@ void ofxFirstPersonCamera::update(ofEventArgs& args)
 
 void ofxFirstPersonCamera::nodeRotate(ofMouseEventArgs& mouse)
 {
-  if(!IsControlled) return;
+  bool active = m_isControlled;
+  if( !active ) return;
 
   int win_w;
   int win_h;
-  auto win = GLFWWindow;
+  auto win = m_glfwWindow;
   glfwGetWindowSize(win, &win_w, &win_h);
   int win_center_x = win_w / 2.0f;
   int win_center_y = win_h / 2.0f;
 
   float mouse_x = mouse.x;
   float mouse_y = mouse.y;
-  if (!IsMouseInited) {
+  bool inited = m_isMouseInited;
+  if (!inited) {
   // Fixes first mouse move
     mouse_x = win_center_x;
     mouse_y = win_center_y;
-    IsMouseInited = true;
+    m_isMouseInited = true;
   }
 
   float sensit = sensitivity;
@@ -171,38 +174,38 @@ void ofxFirstPersonCamera::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxFirstPersonCamera::keyPressed(ofKeyEventArgs& keys)
 {
-  Pressed act = Actions;
+  Actions doa = m_doa;
   int key = keys.keycode;
 
-  if      (key == keyUp       ) act.Up        = true;
-  else if (key == keyDown     ) act.Down      = true;
-  else if (key == keyLeft     ) act.Left      = true;
-  else if (key == keyRight    ) act.Right     = true;
-  else if (key == keyForward  ) act.Forward   = true;
-  else if (key == keyBackward ) act.Backward  = true;
+  if      (key == keyUp       ) doa.Up        = true;
+  else if (key == keyDown     ) doa.Down      = true;
+  else if (key == keyLeft     ) doa.Left      = true;
+  else if (key == keyRight    ) doa.Right     = true;
+  else if (key == keyForward  ) doa.Forward   = true;
+  else if (key == keyBackward ) doa.Backward  = true;
 
-  else if (key == keyRollLeft ) act.RollLeft  = true;
-  else if (key == keyRollRight) act.RollRight = true;
-  else if (key == keyRollReset) act.RollReset = true;
+  else if (key == keyRollLeft ) doa.RollLeft  = true;
+  else if (key == keyRollRight) doa.RollRight = true;
+  else if (key == keyRollReset) doa.RollReset = true;
 
-  Actions = act;
+  m_doa = doa;
 }
 
 void ofxFirstPersonCamera::keyReleased(ofKeyEventArgs& keys)
 {
-  Pressed act = Actions;
+  Actions doa = m_doa;
   int key = keys.keycode;
 
-  if      (key == keyUp       ) act.Up        = false;
-  else if (key == keyDown     ) act.Down      = false;
-  else if (key == keyLeft     ) act.Left      = false;
-  else if (key == keyRight    ) act.Right     = false;
-  else if (key == keyForward  ) act.Forward   = false;
-  else if (key == keyBackward ) act.Backward  = false;
+  if      (key == keyUp       ) doa.Up        = false;
+  else if (key == keyDown     ) doa.Down      = false;
+  else if (key == keyLeft     ) doa.Left      = false;
+  else if (key == keyRight    ) doa.Right     = false;
+  else if (key == keyForward  ) doa.Forward   = false;
+  else if (key == keyBackward ) doa.Backward  = false;
 
-  else if (key == keyRollLeft ) act.RollLeft  = false;
-  else if (key == keyRollRight) act.RollRight = false;
-  else if (key == keyRollReset) act.RollReset = false;
+  else if (key == keyRollLeft ) doa.RollLeft  = false;
+  else if (key == keyRollRight) doa.RollRight = false;
+  else if (key == keyRollReset) doa.RollReset = false;
 
-  Actions = act;
+  m_doa = doa;
 }
