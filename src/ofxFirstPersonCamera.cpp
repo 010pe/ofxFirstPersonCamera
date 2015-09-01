@@ -51,17 +51,6 @@ void ofxFirstPersonCamera::enableControl()
 
   glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-# ifdef TARGET_LINUX
-  Display* x11Display = ofGetX11Display();
-  Window x11Window = ofGetX11Window();
-  const char data[] = {0};
-  Pixmap pixels = XCreateBitmapFromData(x11Display, x11Window, data, 1, 1);
-  XColor color;
-  Cursor cursor = XCreatePixmapCursor(x11Display, pixels, pixels, &color, &color, 0, 0);
-  XDefineCursor(x11Display, x11Window, cursor);
-  XFreeCursor(x11Display, cursor);
-# endif
-
   int win_w;
   int win_h;
   glfwGetWindowSize(win, &win_w, &win_h);
@@ -76,10 +65,6 @@ void ofxFirstPersonCamera::enableControl()
 void ofxFirstPersonCamera::disableControl()
 {
   glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-# ifdef TARGET_LINUX
-  XUndefineCursor(ofGetX11Display(), ofGetX11Window());
-# endif
 
   m_isControlled = false;
 }
