@@ -43,6 +43,8 @@ class ofxFirstPersonCamera : public ofCamera
 
     void nodeRotate(ofMouseEventArgs&);
 
+    GLFWwindow* m_glfwWindow;
+    
     struct Actions {
       bool Up;
       bool Down;
@@ -57,6 +59,4 @@ class ofxFirstPersonCamera : public ofCamera
 
     bool m_isControlled;
     bool m_isMouseInited;
-
-    GLFWwindow* m_glfwWindow;
 };
